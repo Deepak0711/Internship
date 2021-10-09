@@ -284,21 +284,21 @@ func newPostHandlers() *PostHandlers {
 
 }
 
-// Manager password
-type adminPortal struct {
+
+type adminControl struct {
 	password string
 }
 
-func newAdminPortal() *adminPortal {
-	password := os.Getenv("ADMIN_PASSWORD")
+func newAdminControl() *adminControl {
+	password := os.Getenv("ADMIN_PASSCODE")
 	if password == "" {
-		panic("required env var ADMIN_PASSWORD not set")
+		panic("required env var ADMIN_PASSCODE not set")
 	}
 
-	return &adminPortal{password: password}
+	return &adminControl{password: password}
 }
 
-func (a adminPortal) handler(w http.ResponseWriter, r *http.Request) {
+func (a adminControl) handler(w http.ResponseWriter, r *http.Request) {
 	user, pass, ok := r.BasicAuth()
 	if !ok || user != "admin" || pass != a.password {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -318,7 +318,7 @@ func main() {
 	http.HandleFunc("/posts", PostHandlers.posts)
 	http.HandleFunc("/posts/", PostHandlers.getPosts)
 	http.HandleFunc("/admin", admin.handler)
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":3000", nil)
 	if err != nil {
 		panic(err)
 	}
